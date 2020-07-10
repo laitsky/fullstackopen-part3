@@ -1,9 +1,11 @@
 const express = require("express");
+const morgan = require("morgan");
+
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(morgan('tiny'));
 let persons = [
   {
     name: "Arto Hellas",
@@ -57,7 +59,7 @@ const generateId = () => Math.floor(Math.random() * 50000);
 
 app.post("/api/persons", (req, res) => {
   const { name, number } = req.body;
-  
+
   if (!name || !number) {
     return res.status(406).json({
       error: "Name or number is missing",
