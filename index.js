@@ -101,5 +101,5 @@ app.get("/info", (req, res) => {
     <p>${new Date()}</p>
     `);
 });
-PORT = 3001;
+PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {});
