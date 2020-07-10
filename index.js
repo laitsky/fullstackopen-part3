@@ -1,8 +1,8 @@
 const express = require("express");
-
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
 let persons = [
   {
@@ -31,6 +31,10 @@ app.get("/", (req, res) => {
   res.send("<h1>Hello World</h1>");
 });
 
+app.get("/api/persons", (req, res) => {
+    res.send(persons);
+  });
+
 app.get("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id);
   const person = persons.find((note) => note.id === id);
@@ -49,9 +53,19 @@ app.delete("/api/persons/:id", (req, res) => {
     res.status(200).end();
 })
 
-app.get("/api/persons", (req, res) => {
-  res.send(persons);
-});
+const generateId = () => Math.floor(Math.random() * 50000);
+
+app.post("/api/persons", (req, res) => {
+    const {name, number} = req.body;
+    
+    const person = {
+        name,
+        number,
+        id: generateId()
+    };
+    persons = persons.concat(person);
+    res.status(200).json(person);
+})
 
 app.get("/info", (req, res) => {
   const personCount = persons.length;
