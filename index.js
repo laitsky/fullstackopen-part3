@@ -5,7 +5,20 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan('tiny'));
+app.use(
+  morgan((token, req, res) => {
+    return [
+      token.method(req, res),
+      token.url(req, res),
+      token.status(req, res),
+      token.res(req, res, "content-length"),
+      "-",
+      token["response-time"](req, res),
+      "ms",
+      req.method === "POST" ? JSON.stringify(req.body) : "",
+    ].join(" ");
+  })
+);
 let persons = [
   {
     name: "Arto Hellas",
