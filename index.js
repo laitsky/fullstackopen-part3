@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 let persons = [
   {
@@ -32,8 +32,8 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/persons", (req, res) => {
-    res.send(persons);
-  });
+  res.send(persons);
+});
 
 app.get("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id);
@@ -47,25 +47,35 @@ app.get("/api/persons/:id", (req, res) => {
 });
 
 app.delete("/api/persons/:id", (req, res) => {
-    const id = Number(req.params.id);
-    persons = persons.filter(person => person.id !== id);
+  const id = Number(req.params.id);
+  persons = persons.filter((person) => person.id !== id);
 
-    res.status(200).end();
-})
+  res.status(200).end();
+});
 
 const generateId = () => Math.floor(Math.random() * 50000);
 
 app.post("/api/persons", (req, res) => {
-    const {name, number} = req.body;
-    
-    const person = {
-        name,
-        number,
-        id: generateId()
-    };
-    persons = persons.concat(person);
-    res.status(200).json(person);
-})
+  const { name, number } = req.body;
+  
+  if (!name || !number) {
+    return res.status(406).json({
+      error: "Name or number is missing",
+    });
+  } else if (persons.find((person) => person.name === name)) {
+    return res.status(406).json({
+      error: "Name must be unique",
+    });
+  }
+
+  const person = {
+    name,
+    number,
+    id: generateId(),
+  };
+  persons = persons.concat(person);
+  res.status(201).json(person);
+});
 
 app.get("/info", (req, res) => {
   const personCount = persons.length;
