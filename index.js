@@ -35,20 +35,32 @@ app.get("/api/persons", (req, res) => {
 });
 
 app.get("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const person = persons.find((note) => note.id === id);
+  Person.findById(req.params.id)
+    .then((person) => {
+      if (person) {
+        res.json(person);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((err) => next(err));
+});
 
-  if (person) {
-    res.json(person);
-  } else {
-    res.status(404).end();
-  }
+app.put("/api/persons/:id", (req, res) => {
+  const { name, number } = req.body;
+  const person = { name, number };
+
+  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+    .then((updatedPerson) => res.json(updatedPerson))
+    .catch((err) => next(err));
 });
 
 app.delete("/api/persons/:id", (req, res) => {
   Person.findByIdAndRemove(req.params.id)
-    .then((res) => res.status(204).end())
-    .catch((err) => next(err));
+    .then((person) => {
+      res.status(204).end();
+    })
+    .catch((err) => res.status(404).end());
 });
 
 const generateId = () => Math.floor(Math.random() * 50000);
@@ -78,8 +90,8 @@ app.get("/info", (req, res) => {
 const errorHandler = (err, req, res, next) => {
   console.log(err.message);
 
-  if ((err.name = "CastError")) {
-    return res.status(400).send({ error: "malformatted id" });
+  if (err.name === "CastError") {
+    return res.status(400).send({ error: "id not valid" });
   }
 
   next(err);
