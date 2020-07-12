@@ -1,17 +1,18 @@
-const mongoose = require("mongoose");
-const uniqueValidator = require("mongoose-unique-validator");
+const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
-mongoose.set("useNewUrlParser", true);
-mongoose.set("useFindAndModify", false);
-mongoose.set("useCreateIndex", true);
-mongoose.set("useUnifiedTopology", true);
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
 
 const url = process.env.MONGODB_URI;
 
 mongoose
   .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then((res) => console.log("connected to database!"))
-  .catch((err) => console.log("error:", err.message));
+  // eslint-disable-next-line no-unused-vars
+  .then((res) => console.log('connected to database!'))
+  .catch((err) => console.log('error:', err.message));
 
 const personSchema = new mongoose.Schema({
   name: {
@@ -28,7 +29,7 @@ const personSchema = new mongoose.Schema({
 });
 personSchema.plugin(uniqueValidator);
 
-personSchema.set("toJSON", {
+personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
@@ -36,4 +37,4 @@ personSchema.set("toJSON", {
   },
 });
 
-module.exports = mongoose.model("Person", personSchema);
+module.exports = mongoose.model('Person', personSchema);
