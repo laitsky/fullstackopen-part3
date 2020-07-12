@@ -50,7 +50,7 @@ app.put("/api/persons/:id", (req, res) => {
   const { name, number } = req.body;
   const person = { name, number };
 
-  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+  Person.findByIdAndUpdate(req.params.id, person, { new: true, runValidators: true })
     .then((updatedPerson) => res.json(updatedPerson))
     .catch((err) => next(err));
 });
@@ -91,7 +91,6 @@ app.get("/info", (req, res) => {
 });
 
 const errorHandler = (err, req, res, next) => {
-  console.log(err.message);
 
   if (err.name === "CastError") {
     return res.status(400).send({ error: "id not valid" });
