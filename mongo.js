@@ -4,7 +4,10 @@ const password = process.argv[2];
 
 const url = `mongodb+srv://fullstackopen:${password}@fullstackopen-backend.z8qmc.gcp.mongodb.net/fullstackopen?retryWrites=true&w=majority`;
 
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose
+  .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then((res) => console.log("connected to database!"))
+  .catch((err) => console.log("error:", err.message));
 
 const personSchema = new mongoose.Schema({
   name: String,
