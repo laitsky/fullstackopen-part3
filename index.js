@@ -46,10 +46,9 @@ app.get("/api/persons/:id", (req, res) => {
 });
 
 app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  persons = persons.filter((person) => person.id !== id);
-
-  res.status(200).end();
+  Person.findByIdAndRemove(req.params.id)
+    .then((res) => res.status(204).end())
+    .catch((err) => next(err));
 });
 
 const generateId = () => Math.floor(Math.random() * 50000);
@@ -75,5 +74,17 @@ app.get("/info", (req, res) => {
     <p>${new Date()}</p>
     `);
 });
+
+const errorHandler = (err, req, res, next) => {
+  console.log(err.message);
+
+  if ((err.name = "CastError")) {
+    return res.status(400).send({ error: "malformatted id" });
+  }
+
+  next(err);
+};
+app.use(errorHandler);
+
 PORT = process.env.PORT;
 app.listen(PORT, () => {});
